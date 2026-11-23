@@ -49,7 +49,9 @@ export default defineConfig({
     rollupOptions: {
       input: {
         // List every widget entry point here
-        allysWidget: resolve(__dirname, 'src/widgets/plot/index.html')
+        timePlot: resolve(__dirname, 'src/widgets/time-plot/index.html'),
+        histogramPlot: resolve(__dirname, 'src/widgets/histogram-plot/index.html'),
+        tileplot: resolve(__dirname, 'src/widgets/tile-plot/index.html'),
       }
     }
   }

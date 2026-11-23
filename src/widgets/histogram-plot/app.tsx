@@ -1,0 +1,299 @@
+import { memo, useEffect, useState } from "react";
+import "@jetbrains/ring-ui-built/components/style.css";
+// import "../../style/layout.css";
+import "../../style/app.css";
+import "../../style/svg.css";
+
+import type {EmbeddableWidgetAPI, HostAPI } from "../../../@types/globals";
+
+import Configuration from "./Configuration.tsx";
+
+import { extractAllPeople } from "../../utils/dataService.ts";
+import { evaluateFromPOV, extractRelevantInfo } from "../../utils/processingData.ts";
+import { sub } from "date-fns";
+
+import ButtonGroup from "@jetbrains/ring-ui-built/components/button-group/button-group";
+import Button from "@jetbrains/ring-ui-built/components/button/button";
+import ButtonToolbar from "@jetbrains/ring-ui-built/components/button-toolbar/button-toolbar";
+import DatePicker from "@jetbrains/ring-ui-built/components/date-picker/date-picker.js";
+
+import type {author, ExtractedDataPoint, FetchedDataPoint} from "../../utils/types";
+import type {
+  ChartData,
+  WidgetConfiguration,
+} from "./types.d.ts";
+
+import { mockData } from "../../utils/mockData.ts";
+import { timeAggregationOptions } from "../../utils/constants.ts";
+import { useResizeObserver } from "../../hooks/useResizeObserver.ts";
+
+import HistogramPlot from "./HistogramPlot.tsx";
+
+import {flatRollup, InternMap, max, rollup, sum} from "d3-array";
+
+
+const AppComponent = () => {  
+  const [plotEl, setPlotEl] = useState<HTMLDivElement | null>(null);
+  const {
+    width: containerWidth,
+    height: containerHeight,
+    isResizing,
+  } = useResizeObserver(plotEl);
+  const [host, setHost] = useState<EmbeddableWidgetAPI | "localhost">();
+  const [isConfiguring, setIsConfiguring] = useState<boolean>(false);
+
+  const [config, setConfig] = useState<WidgetConfiguration>();
+
+  const isLocalhost = window.location.hostname === "localhost";
+
+  const [maxX, setMaxX] = useState<number>(0);
+  const [maxY, setMaxY] = useState<number>(0);
+
+  const register = async () => {
+    if (isLocalhost) {
+      // running outside of YouTrack (vite dev server): no Host API available, use mock data
+      console.info("running on localhost, skipping YouTrack registration");
+      setHost("localhost");
+      return;
+    }
+    console.info("trying to register")
+    try {
+      const newHost = await YTApp.register({
+        onConfigure: () => setIsConfiguring(true),
+      });
+
+      if (!("readConfig" in newHost)) {
+        console.error("no readconfig method in host! Check extension type")
+        return;
+      }
+      setHost(newHost);
+    } catch (e) {
+      console.warn("Could not register with YouTrack host", e);
+    }
+  };
+
+  const readConfig = async () => {
+    if (isLocalhost) return;
+    const registeredHost = await YTApp.register()
+    if (!("readConfig" in registeredHost)) {
+      console.error("no readconfig method in host! Check extension type")
+      return;
+    }
+
+    try {
+      const loadedConfig = await registeredHost.readConfig<WidgetConfiguration>();
+      console.info("loaded config", loadedConfig);
+      if (loadedConfig) {
+        // if config is sufficient
+        setConfig(loadedConfig);
+        if ("setTitle" in registeredHost)
+          await registeredHost.setTitle(loadedConfig.title);
+      } else {
+        await registeredHost.enterConfigMode();
+        setIsConfiguring(true);
+      }
+    } catch (e) {
+      console.error("Could not read config from host", e);
+    }
+  };
+
+  const doneConfiguring = async (newConfig?: WidgetConfiguration) => {
+    try {
+      if (host === "localhost") {
+        if (newConfig) setConfig(newConfig);
+        setIsConfiguring(false);
+        return;
+      }
+      if (newConfig) {
+        await (host as EmbeddableWidgetAPI).storeConfig(newConfig);
+        setConfig(newConfig);
+      }
+      setIsConfiguring(false);
+      await (host as EmbeddableWidgetAPI).exitConfigMode();
+    } catch (e) {
+      console.error("Failed to store config / exit config mode", e);
+      return;
+    }
+  };
+
+  useEffect(() => {
+    register()
+        .then(() => readConfig());
+  }, []);
+
+  const [timeframe, setTimeframe] = useState<{ from: Date; to: Date }>({
+    from: sub(new Date(), { months: 3 }),
+    to: new Date(),
+  });
+  const [selectedTimeAggregationKey, setSelectedTimeAggregationKey] = useState<string>("week")
+
+  const [extractedDataPoints, setExtractedDataPoints] = useState<
+      ExtractedDataPoint[]
+  >([]);
+  const [authors, setAuthors] = useState<author[]>([]);
+  const [selectedPerson, setSelectedPerson] = useState<string>("");
+
+  const [chartData, setChartData] = useState<ChartData>(new InternMap());
+
+  const loadData = async () => {
+    const { from, to } = timeframe;
+    const fetchData = async () => {
+      if (isLocalhost) {
+        return mockData(from, to, ["David", "Britta", "Cinna"], 1000);
+      }
+
+      const newHost: HostAPI = await YTApp.register();
+      // define which fields you need
+      const query = encodeURIComponent(config?.query ?? "");
+      const fields =
+          "id,author(id,name,login),duration(minutes),date,text,issue(id,customFields(id,name,value(id,name)))";
+      const startDate = from.toISOString().split("T")[0];
+      const endDate = to.toISOString().split("T")[0];
+
+      return await newHost.fetchYouTrack<FetchedDataPoint[]>(
+          `workItems?startDate=${startDate}&endDate=${endDate}&fields=${fields}&query=${query}`,
+      );
+    };
+
+    const fetchedData: FetchedDataPoint[] = await fetchData();
+    const allAuthors = extractAllPeople(fetchedData);
+    setAuthors(allAuthors);
+
+    if (allAuthors.length) {
+      setSelectedPerson(allAuthors[0].id);
+    }
+    const newDataPoints: ExtractedDataPoint[] =
+        extractRelevantInfo(fetchedData);
+    setExtractedDataPoints(newDataPoints);
+  };
+
+  useEffect(() => {
+    loadData();
+  }, [timeframe, config?.query]);
+
+  useEffect(() => {
+    if (extractedDataPoints.length === 0) {
+      return;
+    }
+
+    if (!config?.binSize) {
+      return
+    }
+
+    const groupingFunction = timeAggregationOptions.get(config.groupWorkItemsBy)!.dateAggregationFunction;
+
+    const minutesPerTimeframe = rollup(
+        extractedDataPoints,
+        D => sum(D.map(d => d.minutes)),
+        d => groupingFunction(d.date)
+    )
+
+    const countByPersonAndBin = flatRollup(
+        extractedDataPoints,
+        D => sum(D.map(d => d.minutes)),
+        d => d.authorId,
+        d => groupingFunction(d.date)
+    )
+
+    const fallbackSize = config.binSize
+    const countMapByPersonAndBin: ChartData = rollup(
+        countByPersonAndBin,
+        D => D.length,
+        d => d[0],
+        d => Math.floor(d[2] / config.binSize) * config.binSize
+    )
+    
+    const flatCountMap = flatRollup(
+        countByPersonAndBin,
+        D => D.length,
+        d => d[0],
+        d => Math.floor(d[2] / config.binSize) * config.binSize
+    )
+    setMaxX(max(flatCountMap, d=> d[1]) ?? 0)
+    setMaxY(max(flatCountMap, d => d[2]) ?? 0)
+    setChartData(countMapByPersonAndBin.get(selectedPerson) ?? new InternMap());
+  }, [extractedDataPoints, selectedPerson, config]);
+
+
+  return (
+      <>
+        <section id="header" className="component">
+          <ButtonToolbar>
+            <ButtonGroup>
+              {authors.map((person) => {
+                return (
+                    <Button
+                        key={person.id}
+                        active={person.id === selectedPerson}
+                        onClick={() => setSelectedPerson(person.id)}
+                    >
+                      {person.name}
+                    </Button>
+                );
+              })}
+            </ButtonGroup>
+
+            {/*<Button onClick={() => loadData()}>Refresh Data</Button>*/}
+
+            {/* <ButtonGroup>
+              {Array.from(timeAggregationOptions.keys()).map((key) => {
+                return (
+                    <Button
+                        key={key}
+                        value={key}
+                        onClick={() => setSelectedTimeAggregationKey(key)}
+                        active={key === selectedTimeAggregationKey}
+                    >
+                      {key}
+                    </Button>
+                )
+              })}
+            </ButtonGroup> */}
+
+            <Button onClick={() => setIsConfiguring(!isConfiguring)}>
+              Configure
+            </Button>
+
+            <DatePicker
+                clear
+                from={timeframe.from}
+                maxDate={new Date().toDateString()}
+                onChange={({ from, to }: { from?: Date | null; to?: Date | null }) => {
+                  if (from && to) {
+                    setTimeframe({ from, to });
+                  }
+                }}
+                range
+                to={timeframe.to}
+            />
+          </ButtonToolbar>
+        </section>
+          {
+            isConfiguring 
+            &&
+            <section id="graph" className="component" ref={(el: HTMLElement | null) => setPlotEl(el as HTMLDivElement | null)}>
+              <Configuration 
+                onDone={doneConfiguring}
+                currentConfiguration={config}
+              />
+            </section>
+          }
+          {
+            isConfiguring === false 
+            &&
+            <section id="graph" className="component" ref={(el: HTMLElement | null) => setPlotEl(el as HTMLDivElement | null)}>
+              <HistogramPlot
+                  data={chartData}
+                  width={containerWidth}
+                  height={containerHeight}
+                  binWidthMinutes={config?.binSize}
+                  maxX={maxX}
+                  maxY={maxY}
+              /> 
+            </section>
+          }
+      </>
+  );
+};
+
+export const App = memo(AppComponent);

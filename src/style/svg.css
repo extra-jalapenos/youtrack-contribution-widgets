@@ -1,0 +1,21 @@
+
+/* styling svg text and lines the same way as native p-element text */
+text {
+  fill: currentColor;
+  font-family: var(--ring-font-family);
+  font-size: var(--ring-font-size);
+}
+
+g.canvas :is(path, rect, circle) {
+    fill: var(--ring-main-color);
+    stroke: var(--ring-main-color);
+}
+
+g.axes line {
+  stroke: currentColor;
+  opacity: 0.05;
+}
+
+.axis line, .axis path {
+  stroke: currentColor;
+}
