@@ -23,23 +23,23 @@ const ContributionDistributionComponent = ({ issue, colorScale, mode, maxTotalMi
   const barWidthPct = scaleBase > 0 ? (total / scaleBase) * 100 : 0;
 
   return (
-    <div className="aw__entry">
-      <div className="aw__entry__container">
-        <div className="aw__issue">
-          <Link className="aw__issue__id">{issue.key}</Link>
-          <Link className="aw__issue__summary">{issue.summary}</Link>
+    <div className="entry">
+      <div className="entry container">
+        <div className="issue">
+          <Link className="issue id">{issue.key}</Link>
+          <Link className="issue summary">{issue.summary}</Link>
         </div>
       </div>
 
-      <div className="aw__entry__user-activity">
-        <div className="aw__entry__user-activity__data">
-          <div className="aw__entry__user-activity__data__header">
-            <div className="aw__entry__user-activity__data__header__action">
-              <span className="aw__action-name">{formatMinutes(total)} total</span>
+      <div className="entry user-activity">
+        <div className="entry user-activity data">
+          <div className="entry user-activity data header">
+            <div className="entry user-activity data header action">
+              <span className="action-name">{formatMinutes(total)} total</span>
             </div>
           </div>
 
-          <div className="aw__entry__user-activity__data__content">
+          <div className="entry user-activity data content">
             <div className="cd-track">
               <div
                 className="cd-bar"

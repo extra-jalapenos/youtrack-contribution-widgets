@@ -28,25 +28,25 @@ body {
   overflow-y: auto;
 }
 
-.aw__entry {
+[class="entry"] {
   display: flex;
   flex-direction: column;
   gap: var(--ring-unit);
   margin: var(--ring-unit) 0;
 }
 
-.aw__issue {
+[class="issue"] {
   display: flex;
   align-items: baseline;
   gap: var(--ring-unit);
 }
 
-.aw__issue__id {
+.issue.id {
   font-weight: bold;
   white-space: nowrap;
 }
 
-.aw__issue__summary {
+.issue.summary {
   flex: 1;
   min-width: 0;
   overflow: hidden;
@@ -54,12 +54,12 @@ body {
   white-space: nowrap;
 }
 
-.aw__entry__user-activity__data__header {
+.entry.user-activity.data.header:not(.action) {
   color: var(--ring-secondary-color);
   font-size: var(--ring-font-size-smaller);
 }
 
-.aw__entry__user-activity__data__content {
+.entry.user-activity.data.content {
   display: flex;
   flex-direction: column;
   gap: var(--ring-unit);
