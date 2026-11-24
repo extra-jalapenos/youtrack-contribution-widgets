@@ -4,17 +4,11 @@ import Input from '@jetbrains/ring-ui-built/components/input/input';
 import Button from '@jetbrains/ring-ui-built/components/button/button';
 import ButtonSet from '@jetbrains/ring-ui-built/components/button-set/button-set';
 import type {WidgetConfiguration} from './types.d.ts';
-import Text from '@jetbrains/ring-ui-built/components/text/text.js';
 import Heading from '@jetbrains/ring-ui-built/components/heading/heading.js';
 import ButtonGroup from '@jetbrains/ring-ui-built/components/button-group/button-group.js';
-import { TimeAggregationOption } from '../../utils/classes.ts';
 import { readableDuration, timeAggregationOptions } from '../../utils/constants.ts';
 import ControlLabel from '@jetbrains/ring-ui-built/components/control-label/control-label.js';
-import { Slider } from '@jetbrains/ring-ui-built/components/slider/slider.js';
-import { intervalToDuration } from 'date-fns/fp';
 
-const getDuration = intervalToDuration({ start: 0, end: 2000 * 1000 })
-console.log(getDuration)
 interface Props {
     onDone: (config?: WidgetConfiguration) => void;
     currentConfiguration?: WidgetConfiguration;

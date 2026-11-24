@@ -1,6 +1,6 @@
 // we only feed raw data into the component.
 import { useRef, useEffect, useMemo } from "react";
-import type { ChartConfig, ChartData, ChartDataPoint } from "./types.d.ts";
+import type { ChartConfig, ChartData } from "./types.d.ts";
 
 import { every, max, range } from "d3-array";
 import { select } from "d3-selection";
@@ -49,7 +49,7 @@ const HistogramPlot = ({
     const canvasWidth = viewBoxWidth - margins.left - margins.right;
     const canvasHeight = viewBoxHeight - margins.top - margins.bottom;
     // not measured yet (or nothing to show): wait for the next width/height/data change
-    if (canvasWidth <= 0 || canvasHeight <= 0 || data.length === 0) {
+    if (canvasWidth <= 0 || canvasHeight <= 0 || data.size === 0) {
         return;
     }
 

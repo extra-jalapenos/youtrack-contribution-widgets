@@ -15,12 +15,26 @@
       "type": "number"
     },
     "groupWorkItemsBy": {
-      "title": "Group workitems by",
+      "title": "Group work items by",
       "type": "string"
     },
-    "timeframe": {
-        "type": "object",
-        "title": "For relative timeframes"
+    "timeframeStartOffsetUnit": {
+        "type": "string",
+        "title": "Unit for relative timeframe start offset"
+    },
+    "timeframeStartOffsetAmount": {
+      "type": "number",
+      "title": "Amount for relative timeframe start offset in relation to today"
+    },
+    "timeframeEndOffsetUnit": {
+      "title": "End offset amount",
+      "description": "Unit for relative timeframe end offset",
+      "type": "string"
+    },
+    "timeframeEndOffsetAmount": {
+      "title": "End offset amount",
+      "type": "number",
+      "description": "Amount for relative timeframe end offset in relation to today"
     }
   }
 }

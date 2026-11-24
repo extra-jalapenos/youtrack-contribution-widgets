@@ -62,6 +62,21 @@ const TilePlot = ({
         () => timeDays(timeDay.floor(timeframe.from), timeDay.ceil(timeframe.to)),
         [timeframe]
     );
+
+    // one datum per day in the timeframe; days without data become zero-valued placeholders
+    // (styled via [data-total-minutes="0"] in layout.css)
+    const cells: ChartDataPoint[] = useMemo(() => {
+        const byDay = new Map(data.map(d => [timeDay.floor(d.date).getTime(), d]));
+        return allDays.map(date => byDay.get(date.getTime()) ?? {
+            date,
+            minutes: 0,
+            avgMinutes: 0,
+            totalMinutes: 0,
+            contribution: 0,
+            contributionCategory: "",
+        });
+    }, [data, allDays]);
+
     const xBandValues: Date[] = useMemo(
         () => timeMondays(timeDay.floor(timeframe.from), timeDay.ceil(timeframe.to)),
         [timeframe.from, timeframe.to],
@@ -101,7 +116,6 @@ const TilePlot = ({
 
         const duration = dataChanged ? TRANSITION_MS : 0;
 
-
         const xScale = scaleBand<Date>()
             .domain(xBandValues)
             .range([0, contentWidth])
@@ -129,7 +143,7 @@ const TilePlot = ({
 
         canvas
             .selectAll<SVGRectElement, ChartDataPoint>("rect.own-contribution")
-            .data(sort(data, d => d.date), d => d.date.getTime())
+            .data(cells, d => d.date.getTime())
             .join(
                 (enter) => {
                     const rects = enter.append("rect");
@@ -154,6 +168,7 @@ const TilePlot = ({
                 (exit) => exit.remove(),
             )
             .attr("data-value", (d: ChartDataPoint) => d.contribution)
+            .attr("data-total-minutes", (d: ChartDataPoint) => d.totalMinutes)
             .attr("data-date", (d: ChartDataPoint) => d.date.toLocaleDateString())
             .attr("class", "own-contribution")
             .attr("x", (d: ChartDataPoint) => xScale(timeMonday(d.date)) ?? - xScale.bandwidth())
@@ -167,7 +182,7 @@ const TilePlot = ({
                     .select("title")
                     .text((d) => describeDataPoint(d)),
             );
-    }, [data, viewBoxWidth, viewBoxHeight, xBandValues, contentWidth]);
+    }, [data, cells, viewBoxWidth, viewBoxHeight, xBandValues, contentWidth]);
 
 
     // hovering the chart + mouse wheel scrolls it horizontally, handled via d3's event binding

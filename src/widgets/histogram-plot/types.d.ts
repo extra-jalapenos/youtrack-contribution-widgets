@@ -9,11 +9,11 @@ export type WidgetConfiguration = {
     title: string;
     query: string;
     binSize: number;
-    groupWorkItemsBy: "none" | "day" | "week" | "month" | "quarter" | "year";
-    timeframe: {
-        start: relativeTimeframe;
-        end: relativeTimeframe;
-    }
+    groupWorkItemsBy: "id" | "day" | "week" | "month" | "quarter" | "year";
+    timeframeStartOffsetAmount: number;
+    timeframeStartOffsetUnit: "day" | "week" | "month" | "quarter" | "year";
+    timeframeEndOffsetAmount: number;
+    timeframeEndOffsetUnit: "day" | "week" | "month" | "quarter" | "year";
 }
 
 export type ChartData = InternMap<number, number>
