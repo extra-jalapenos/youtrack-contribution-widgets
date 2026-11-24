@@ -1,4 +1,5 @@
 import { memo, useState } from "react";
+import { descending, max, rollup, sort, sum } from "d3-array";
 import "@jetbrains/ring-ui-built/components/style.css";
 import "./app.css";
 
@@ -14,23 +15,24 @@ import { loadExampleIssues } from "./dummyData.ts";
 import type { IssueContribution } from "./types.ts";
 import { createCategoricalColorScale } from "./colors.ts";
 
-const totalMinutes = (issue: IssueContribution) =>
-  issue.contributions.reduce((sum, c) => sum + c.minutes, 0);
+const totalMinutes = (issue: IssueContribution) => sum(issue.contributions, (c) => c.minutes);
 
 // Most total worklog time first, ties broken alphabetically by summary
-const issues = loadExampleIssues().sort(
-  (a, b) => totalMinutes(b) - totalMinutes(a) || a.summary.localeCompare(b.summary),
+const issues = sort(
+  loadExampleIssues(),
+  (a, b) => descending(totalMinutes(a), totalMinutes(b)) || a.summary.localeCompare(b.summary),
 );
 // In absolute mode all bars are scaled against the issue with the most time
-const maxTotalMinutes = issues.length ? totalMinutes(issues[0]) : 0;
+const maxTotalMinutes = max(issues, totalMinutes) ?? 0;
 
 // One color per author across all issues, assigned by overall contribution so top contributors get the most distinct colors
-const authorMinutes = new Map<string, number>();
-issues.forEach((i) =>
-  i.contributions.forEach((c) => authorMinutes.set(c.id, (authorMinutes.get(c.id) ?? 0) + c.minutes)),
+const authorMinutes = rollup(
+  issues.flatMap((i) => i.contributions),
+  (contributions) => sum(contributions, (c) => c.minutes),
+  (c) => c.id,
 );
 const colorScale = createCategoricalColorScale(
-  [...authorMinutes.entries()].sort((a, b) => b[1] - a[1]).map(([id]) => id),
+  sort(authorMinutes, ([, a], [, b]) => descending(a, b)).map(([id]) => id),
 );
 
 const AppComponent = () => {

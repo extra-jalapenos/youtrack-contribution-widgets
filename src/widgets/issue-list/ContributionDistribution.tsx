@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { max, sum } from "d3-array";
 import type { IssueContribution } from "./types";
 import { formatMinutes } from "./dummyData";
 import { foregroundFor } from "./colors";
@@ -15,8 +16,8 @@ interface Props {
 }
 
 const ContributionDistributionComponent = ({ issue, colorScale, mode, maxTotalMinutes }: Props) => {
-  const total = issue.contributions.reduce((sum, c) => sum + c.minutes, 0);
-  const scaleBase = mode === "percent" ? total : Math.max(maxTotalMinutes ?? total, total);
+  const total = sum(issue.contributions, (c) => c.minutes);
+  const scaleBase = mode === "percent" ? total : (max([maxTotalMinutes ?? total, total]) ?? total);
   const barWidthPct = scaleBase > 0 ? (total / scaleBase) * 100 : 0;
 
   return (
