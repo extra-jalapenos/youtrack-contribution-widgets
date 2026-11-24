@@ -14,13 +14,29 @@ interface RawWorkItem {
   duration: { minutes: number };
 }
 
+// The example data only has two authors; show them under demo names
+const RENAMED_AUTHORS: Record<string, string> = { Alexandria: "Roxy", Robert: "Connie" };
+
+// Roughly this share of all worklogs is reassigned to the extra demo authors
+const EXTRA_AUTHOR_SHARE = 0.25;
+const EXTRA_AUTHORS = [
+  { id: "demo-cinna", name: "Cinna" },
+  { id: "demo-mickey", name: "Mickey" },
+];
+
 /**
  * Builds issues from the example data (src/dev/issues.json + workItems.json):
  * worklogs are summed per author and issue. Issues without worklogs are skipped.
+ * Authors are renamed and ~25% of worklogs are reassigned to two extra authors (seeded, so stable).
  */
 export const loadExampleIssues = (): IssueContribution[] => {
+  const rand = createRng(7);
   const byIssue = new Map<string, Map<string, { id: string; name: string; minutes: number }>>();
-  for (const w of workItemsJson as unknown as RawWorkItem[]) {
+  for (const raw of workItemsJson as unknown as RawWorkItem[]) {
+    const w: RawWorkItem =
+      rand() < EXTRA_AUTHOR_SHARE
+        ? { ...raw, author: EXTRA_AUTHORS[Math.floor(rand() * EXTRA_AUTHORS.length)] }
+        : { ...raw, author: { ...raw.author, name: RENAMED_AUTHORS[raw.author.name] ?? raw.author.name } };
     const authors = byIssue.get(w.issue.id) ?? new Map();
     const entry = authors.get(w.author.id) ?? { id: w.author.id, name: w.author.name, minutes: 0 };
     entry.minutes += w.duration.minutes;
