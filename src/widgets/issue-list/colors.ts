@@ -161,9 +161,43 @@ const foregroundByBackground = new Map(
   Object.values(YOUTRACK_COLORS).map((p) => [p.background, p.foreground]),
 );
 
-/** d3 ordinal scale: category key (e.g. author id) -> background color. Wraps around when exhausted. */
+/**
+ * d3 ordinal scale: category key (e.g. author id) -> background color, using the YouTrack colors
+ * at the given color indices in order. Wraps around when exhausted.
+ */
+export const createColorScaleFromIndices = (
+  indices: readonly number[],
+  domain: string[],
+): ScaleOrdinal<string, string> => {
+  const backgrounds = indices.map((i) => {
+    const pair = YOUTRACK_COLORS[i];
+    if (!pair) throw new RangeError(`Unknown YouTrack color index: ${i}`);
+    return pair.background;
+  });
+  return scaleOrdinal<string, string>(backgrounds).domain(domain);
+};
+
+/**
+ * Indices approximating the palette of the portrait image: near-black background, navy and
+ * saturated blue clothing, magenta and red shading, pink and salmon highlights, pale pink skin.
+ * Ordered dark to light.
+ */
+export const PORTRAIT_INDICES = [
+  4, // blue
+  19, // pale pink
+  9, // magenta
+  11, // orange
+  12, // pink
+  20, // red
+];
+
+/** Scale resembling the portrait image's colors. */
+export const createPortraitColorScale = (domain: string[]): ScaleOrdinal<string, string> =>
+  createColorScaleFromIndices(PORTRAIT_INDICES, domain);
+
+/** Categorical scale using the default, well-spread color order. */
 export const createCategoricalColorScale = (domain: string[]): ScaleOrdinal<string, string> =>
-  scaleOrdinal<string, string>(CATEGORICAL_PAIRS.map((p) => p.background)).domain(domain);
+  createColorScaleFromIndices(CATEGORICAL_INDICES, domain);
 
 /** Text color that goes with a background returned by the scale. */
 export const foregroundFor = (background: string): string =>

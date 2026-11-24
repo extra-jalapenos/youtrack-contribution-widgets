@@ -14,7 +14,7 @@ import ButtonToolbar from "@jetbrains/ring-ui-built/components/button-toolbar/bu
 import { ContributionDistribution, type DistributionMode } from "./ContributionDistribution.tsx";
 import { loadExampleIssues } from "./dummyData.ts";
 import type { IssueContribution } from "./types.ts";
-import { createCategoricalColorScale } from "./colors.ts";
+import { createCategoricalColorScale, createPortraitColorScale } from "./colors.ts";
 
 const totalMinutes = (issue: IssueContribution) => sum(issue.contributions, (c) => c.minutes);
 
@@ -26,7 +26,7 @@ const authorMinutes = rollup(
   (contributions) => sum(contributions, (c) => c.minutes),
   (c) => c.id,
 );
-const colorScale = createCategoricalColorScale(
+const colorScale = createPortraitColorScale(
   sort(authorMinutes, ([, a], [, b]) => descending(a, b)).map(([id]) => id),
 );
 
