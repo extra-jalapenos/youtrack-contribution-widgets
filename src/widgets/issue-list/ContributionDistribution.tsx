@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useLayoutEffect, useRef, useState } from "react";
 import { max, sum } from "d3-array";
 import Text from "@jetbrains/ring-ui-built/components/text/text.js";
 import Link from "@jetbrains/ring-ui-built/components/link/link.js";
@@ -16,6 +16,48 @@ interface Props {
   /** Largest total across all displayed issues; the absolute-mode bar scales against it. */
   maxTotalMinutes?: number;
 }
+
+/** Horizontal space kept free around a segment's label. */
+const LABEL_PADDING_PX = 8;
+
+interface SegmentProps {
+  share: number;
+  background: string;
+  title: string;
+  label: string;
+}
+
+/** One bar segment; its label is only shown when it fits inside the segment. */
+const Segment = ({ share, background, title, label }: SegmentProps) => {
+  const segmentRef = useRef<HTMLDivElement>(null);
+  const labelRef = useRef<HTMLSpanElement>(null);
+  const [fits, setFits] = useState(false);
+
+  useLayoutEffect(() => {
+    const segment = segmentRef.current;
+    const labelEl = labelRef.current;
+    if (!segment || !labelEl) return;
+    const update = () => setFits(labelEl.offsetWidth + LABEL_PADDING_PX <= segment.clientWidth);
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(segment);
+    return () => observer.disconnect();
+  }, [label]);
+
+  return (
+    <div
+      ref={segmentRef}
+      className="cd-segment"
+      style={{ flexBasis: `${share}%`, background, color: foregroundFor(background) }}
+      title={title}
+    >
+      {/* Always rendered so it can be measured; hidden while it doesn't fit */}
+      <span ref={labelRef} className="cd-segment-label" style={{ visibility: fits ? "visible" : "hidden" }}>
+        <Text size={Text.Size.S}>{label}</Text>
+      </span>
+    </div>
+  );
+};
 
 const ContributionDistributionComponent = ({ issue, colorScale, mode, maxTotalMinutes }: Props) => {
   const total = sum(issue.contributions, (c) => c.minutes);
@@ -47,18 +89,13 @@ const ContributionDistributionComponent = ({ issue, colorScale, mode, maxTotalMi
                   const share = total > 0 ? (c.minutes / total) * 100 : 0;
                   const background = colorScale(c.id);
                   return (
-                    <div
+                    <Segment
                       key={c.id}
-                      className="cd-segment"
-                      style={{ flexBasis: `${share}%`, background, color: foregroundFor(background) }}
+                      share={share}
+                      background={background}
                       title={`${c.name}: ${formatMinutes(c.minutes)} (${share.toFixed(1)}%)`}
-                    >
-                      {share >= 12 && (
-                        <Text size={Text.Size.S} className="cd-segment-label">
-                          {mode === "percent" ? `${Math.round(share)}%` : formatMinutes(c.minutes)}
-                        </Text>
-                      )}
-                    </div>
+                      label={mode === "percent" ? `${Math.round(share)}%` : formatMinutes(c.minutes)}
+                    />
                   );
                 })}
               </div>
