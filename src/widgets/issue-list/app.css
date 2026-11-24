@@ -52,14 +52,12 @@
   align-items: center;
   justify-content: center;
   min-width: 2px;
-  color: #fff;
   font-size: 12px;
   overflow: hidden;
 }
 
 .cd-segment-label {
   white-space: nowrap;
-  text-shadow: 0 0 2px rgb(0 0 0 / 40%);
 }
 
 .cd-legend {
