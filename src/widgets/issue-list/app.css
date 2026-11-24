@@ -1,0 +1,81 @@
+.widget {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--ring-unit) * 2);
+  margin: calc(var(--ring-unit) / 2);
+}
+
+.contribution-distribution {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ring-unit);
+}
+
+.cd-header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--ring-unit);
+}
+
+.cd-key {
+  font-weight: bold;
+  color: var(--ring-link-color);
+}
+
+.cd-summary {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cd-total {
+  color: var(--ring-secondary-color);
+  white-space: nowrap;
+}
+
+.cd-track {
+  width: 100%;
+}
+
+.cd-bar {
+  display: flex;
+  height: 28px;
+  border-radius: 4px;
+  overflow: hidden;
+  transition: width 0.3s ease;
+}
+
+.cd-segment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2px;
+  color: #fff;
+  font-size: 12px;
+  overflow: hidden;
+}
+
+.cd-segment-label {
+  white-space: nowrap;
+  text-shadow: 0 0 2px rgb(0 0 0 / 40%);
+}
+
+.cd-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ring-unit) calc(var(--ring-unit) * 2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--ring-secondary-color);
+}
+
+.cd-swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 4px;
+  border-radius: 2px;
+}
