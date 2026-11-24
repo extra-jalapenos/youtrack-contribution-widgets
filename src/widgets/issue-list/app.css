@@ -1,3 +1,10 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
 .widget {
   font-family: var(--ring-font-family);
   font-size: var(--ring-font-size);
@@ -5,7 +12,20 @@
   display: flex;
   flex-direction: column;
   gap: calc(var(--ring-unit) * 2);
-  margin: calc(var(--ring-unit) / 2);
+  box-sizing: border-box;
+  height: 100vh;
+  padding: calc(var(--ring-unit) / 2);
+}
+
+#header,
+#summary {
+  flex: none;
+}
+
+#list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .contribution-distribution {
@@ -13,6 +33,31 @@
   flex-direction: column;
   gap: var(--ring-unit);
   margin: var(--ring-unit) 0;
+}
+
+.author-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ring-unit);
+}
+
+.author-toggle {
+  padding: 2px;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  background: none;
+  cursor: pointer;
+  opacity: 0.4;
+  transition: opacity 0.2s ease;
+}
+
+.author-toggle[aria-pressed="true"] {
+  border-color: var(--ring-main-color);
+  opacity: 1;
+}
+
+.author-toggle:hover {
+  opacity: 0.8;
 }
 
 .summary-bar {

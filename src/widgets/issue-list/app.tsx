@@ -8,6 +8,7 @@ import "../../style/svg.css";
 
 import ButtonGroup from "@jetbrains/ring-ui-built/components/button-group/button-group";
 import Button from "@jetbrains/ring-ui-built/components/button/button";
+import Avatar, { Size } from "@jetbrains/ring-ui-built/components/avatar/avatar";
 import ButtonToolbar from "@jetbrains/ring-ui-built/components/button-toolbar/button-toolbar";
 
 import { ContributionDistribution, type DistributionMode } from "./ContributionDistribution.tsx";
@@ -88,22 +89,24 @@ const AppComponent = () => {
   return (
     <div className="widget">
       <section id="header" className="component">
+        
         <ButtonToolbar>
-          <ButtonGroup>
-            {authors.map((author) => (
-              <Button key={author.id} active={activeAuthors.has(author.id)} onClick={() => toggleAuthor(author.id)}>
-                {author.name}
-              </Button>
-            ))}
-          </ButtonGroup>
-          <ButtonGroup>
-            <Button active={mode === "percent"} onClick={() => setMode("percent")}>
-              100%
-            </Button>
-            <Button active={mode === "absolute"} onClick={() => setMode("absolute")}>
-              Absolute
-            </Button>
-          </ButtonGroup>
+
+            <ButtonGroup>
+                {authors.map((author) => (
+                    <Avatar key={author.id} username={author.name} size={Size.Size20} onClick={() => toggleAuthor(author.id)} />
+                ))}
+            </ButtonGroup>
+
+            <ButtonGroup>
+                <Button active={mode === "percent"} onClick={() => setMode("percent")}>
+                100%
+                </Button>
+                <Button active={mode === "absolute"} onClick={() => setMode("absolute")}>
+                Absolute
+                </Button>
+            </ButtonGroup>
+
         </ButtonToolbar>
       </section>
       {issues.length > 0 && (
