@@ -2,6 +2,7 @@ html,
 body {
   height: 100%;
   margin: 0;
+  padding: 16px;
   overflow: hidden;
 }
 
@@ -28,14 +29,15 @@ body {
   overflow-y: auto;
 }
 
-[class="entry"] {
+.entry {
   display: flex;
   flex-direction: column;
   gap: var(--ring-unit);
   margin: var(--ring-unit) 0;
+  padding-bottom: calc(3 * var(--ring-unit));
 }
 
-[class="issue"] {
+.issue {
   display: flex;
   align-items: baseline;
   gap: var(--ring-unit);
@@ -99,11 +101,8 @@ body {
   border-bottom: 1px solid var(--ring-borders-color);
 }
 
-.cd-track {
-  width: 100%;
-}
 
-.cd-bar {
+.distribution-bar {
   display: flex;
   height: 28px;
   border-radius: 4px;
@@ -127,12 +126,16 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: var(--ring-unit) calc(var(--ring-unit) * 2);
-  margin: 0;
+  margin: var(--ring-unit) 0;
   padding: 0;
   list-style: none;
 }
 
-.cd-swatch {
+.cd-legend-total {
+  font-weight: bold;
+}
+
+.color-swatch {
   display: inline-block;
   width: 10px;
   height: 10px;

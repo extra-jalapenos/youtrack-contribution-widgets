@@ -37,6 +37,10 @@ const authors = sort(authorMinutes, ([, a], [, b]) => descending(a, b)).map(([id
   name: authorNames.get(id) ?? id,
 }));
 
+// In absolute mode all bars are scaled against the issue with the most time across all authors,
+// so bar widths stay stable when authors are toggled
+const maxTotalMinutes = max(allIssues, totalMinutes) ?? 0;
+
 const AppComponent = () => {
   const [mode, setMode] = useState<DistributionMode>("absolute");
   const [activeAuthors, setActiveAuthors] = useState<ReadonlySet<string>>(
@@ -65,8 +69,6 @@ const AppComponent = () => {
       ),
     [activeAuthors],
   );
-  // In absolute mode all bars are scaled against the issue with the most time
-  const maxTotalMinutes = max(issues, totalMinutes) ?? 0;
 
   // Distribution across all displayed issues, one segment per author (most time first)
   const summary = useMemo<IssueContribution>(() => {

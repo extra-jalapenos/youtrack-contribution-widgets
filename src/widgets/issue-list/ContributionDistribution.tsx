@@ -24,25 +24,19 @@ const ContributionDistributionComponent = ({ issue, colorScale, mode, maxTotalMi
 
   return (
     <div className="entry">
-      <div className="entry container">
+      <div className="container">
         <div className="issue">
           <Link className="issue id">{issue.key}</Link>
           <Link className="issue summary">{issue.summary}</Link>
         </div>
       </div>
 
-      <div className="entry user-activity">
-        <div className="entry user-activity data">
-          <div className="entry user-activity data header">
-            <div className="entry user-activity data header action">
-              <span className="action-name">{formatMinutes(total)} total</span>
-            </div>
-          </div>
-
-          <div className="entry user-activity data content">
-            <div className="cd-track">
+      <div className="user-activity">
+        <div className="user-activity data">
+          <div className="user-activity data content">
+            <div>
               <div
-                className="cd-bar"
+                className="distribution-bar"
                 role="img"
                 aria-label={issue.contributions
                   .map((c) => `${c.name}: ${formatMinutes(c.minutes)}`)
@@ -73,12 +67,15 @@ const ContributionDistributionComponent = ({ issue, colorScale, mode, maxTotalMi
             <ul className="cd-legend">
               {issue.contributions.map((c) => (
                 <li key={c.id}>
-                  <span className="cd-swatch" style={{ background: colorScale(c.id) }} />
+                  <span className="color-swatch" style={{ background: colorScale(c.id) }} />
                   <Text info size={Text.Size.S}>
                     {c.name} · {formatMinutes(c.minutes)}
                   </Text>
                 </li>
               ))}
+              <li className="cd-legend-total">
+                <Text size={Text.Size.S}>Total · {formatMinutes(total)}</Text>
+              </li>
             </ul>
           </div>
         </div>
