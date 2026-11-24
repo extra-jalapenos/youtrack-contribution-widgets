@@ -15,6 +15,15 @@
   margin: var(--ring-unit) 0;
 }
 
+.summary-bar {
+  padding-bottom: calc(var(--ring-unit) * 2);
+  border-bottom: 1px solid var(--ring-borders-color);
+}
+
+.summary-bar .cd-key {
+  color: inherit;
+}
+
 .cd-header {
   display: flex;
   align-items: baseline;

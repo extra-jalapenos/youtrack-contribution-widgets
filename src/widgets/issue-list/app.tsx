@@ -67,6 +67,24 @@ const AppComponent = () => {
   // In absolute mode all bars are scaled against the issue with the most time
   const maxTotalMinutes = max(issues, totalMinutes) ?? 0;
 
+  // Distribution across all displayed issues, one segment per author (most time first)
+  const summary = useMemo<IssueContribution>(() => {
+    const byAuthor = rollup(
+      issues.flatMap((i) => i.contributions),
+      (contributions) => ({
+        id: contributions[0].id,
+        name: contributions[0].name,
+        minutes: sum(contributions, (c) => c.minutes),
+      }),
+      (c) => c.id,
+    );
+    return {
+      key: "Summary",
+      summary: `${issues.length} ${issues.length === 1 ? "issue" : "issues"}`,
+      contributions: sort([...byAuthor.values()], (a, b) => descending(a.minutes, b.minutes)),
+    };
+  }, [issues]);
+
   return (
     <div className="widget">
       <section id="header" className="component">
@@ -88,6 +106,12 @@ const AppComponent = () => {
           </ButtonGroup>
         </ButtonToolbar>
       </section>
+      {issues.length > 0 && (
+        <section id="summary" className="component summary-bar">
+          {/* No maxTotalMinutes: the summary bar always spans the full width */}
+          <ContributionDistribution issue={summary} colorScale={colorScale} mode={mode} />
+        </section>
+      )}
       <section id="list" className="component">
         {issues.map((issue) => (
           <ContributionDistribution
