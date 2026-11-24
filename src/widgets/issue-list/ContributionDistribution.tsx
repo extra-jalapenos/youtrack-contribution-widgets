@@ -1,5 +1,6 @@
 import { memo } from "react";
 import { max, sum } from "d3-array";
+import Text from "@jetbrains/ring-ui-built/components/text/text.js";
 import type { IssueContribution } from "./types";
 import { formatMinutes } from "./dummyData";
 import { foregroundFor } from "./colors";
@@ -23,9 +24,13 @@ const ContributionDistributionComponent = ({ issue, colorScale, mode, maxTotalMi
   return (
     <article className="contribution-distribution">
       <header className="cd-header">
-        <span className="cd-key">{issue.key}</span>
-        <span className="cd-summary">{issue.summary}</span>
-        <span className="cd-total">{formatMinutes(total)} total</span>
+        <Text bold className="cd-key">
+          {issue.key}
+        </Text>
+        <Text className="cd-summary">{issue.summary}</Text>
+        <Text info className="cd-total">
+          {formatMinutes(total)} total
+        </Text>
       </header>
 
       <div className="cd-track">
@@ -48,9 +53,9 @@ const ContributionDistributionComponent = ({ issue, colorScale, mode, maxTotalMi
                 title={`${c.name}: ${formatMinutes(c.minutes)} (${share.toFixed(1)}%)`}
               >
                 {share >= 12 && (
-                  <span className="cd-segment-label">
+                  <Text size={Text.Size.S} className="cd-segment-label">
                     {mode === "percent" ? `${Math.round(share)}%` : formatMinutes(c.minutes)}
-                  </span>
+                  </Text>
                 )}
               </div>
             );
@@ -62,7 +67,9 @@ const ContributionDistributionComponent = ({ issue, colorScale, mode, maxTotalMi
         {issue.contributions.map((c) => (
           <li key={c.id}>
             <span className="cd-swatch" style={{ background: colorScale(c.id) }} />
-            {c.name} · {formatMinutes(c.minutes)}
+            <Text info size={Text.Size.S}>
+              {c.name} · {formatMinutes(c.minutes)}
+            </Text>
           </li>
         ))}
       </ul>
