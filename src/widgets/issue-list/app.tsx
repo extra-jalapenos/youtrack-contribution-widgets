@@ -36,7 +36,7 @@ const colorScale = createCategoricalColorScale(
 );
 
 const AppComponent = () => {
-  const [mode, setMode] = useState<DistributionMode>("percent");
+  const [mode, setMode] = useState<DistributionMode>("absolute");
 
   return (
     <div className="widget">
