@@ -128,7 +128,9 @@ const ContributionDistributionComponent = ({
             </Text>
           </div>
         ))}
-        <Text size={Text.Size.S}>Total · {formatMinutes(total)}</Text>
+        <div>
+          <Text size={Text.Size.S}>Total · {formatMinutes(total)}</Text>
+        </div>
       </div>
     </div>
   );
