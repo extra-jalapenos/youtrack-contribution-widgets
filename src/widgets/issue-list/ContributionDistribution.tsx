@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { max, sum } from "d3-array";
 import Text from "@jetbrains/ring-ui-built/components/text/text.js";
+import Link from "@jetbrains/ring-ui-built/components/link/link.js";
 import type { IssueContribution } from "./types";
 import { formatMinutes } from "./dummyData";
 import { foregroundFor } from "./colors";
@@ -22,58 +23,67 @@ const ContributionDistributionComponent = ({ issue, colorScale, mode, maxTotalMi
   const barWidthPct = scaleBase > 0 ? (total / scaleBase) * 100 : 0;
 
   return (
-    <article className="contribution-distribution">
-      <header className="cd-header">
-        <Text bold className="cd-key">
-          {issue.key}
-        </Text>
-        <Text className="cd-summary">{issue.summary}</Text>
-        <Text info className="cd-total">
-          {formatMinutes(total)} total
-        </Text>
-      </header>
-
-      <div className="cd-track">
-        <div
-          className="cd-bar"
-          role="img"
-          aria-label={issue.contributions
-            .map((c) => `${c.name}: ${formatMinutes(c.minutes)}`)
-            .join(", ")}
-          style={{ width: `${barWidthPct}%` }}
-        >
-          {issue.contributions.map((c) => {
-            const share = total > 0 ? (c.minutes / total) * 100 : 0;
-            const background = colorScale(c.id);
-            return (
-              <div
-                key={c.id}
-                className="cd-segment"
-                style={{ flexBasis: `${share}%`, background, color: foregroundFor(background) }}
-                title={`${c.name}: ${formatMinutes(c.minutes)} (${share.toFixed(1)}%)`}
-              >
-                {share >= 12 && (
-                  <Text size={Text.Size.S} className="cd-segment-label">
-                    {mode === "percent" ? `${Math.round(share)}%` : formatMinutes(c.minutes)}
-                  </Text>
-                )}
-              </div>
-            );
-          })}
+    <div className="aw__entry">
+      <div className="aw__entry__container">
+        <div className="aw__issue">
+          <Link className="aw__issue__id">{issue.key}</Link>
+          <Link className="aw__issue__summary">{issue.summary}</Link>
         </div>
       </div>
 
-      <ul className="cd-legend">
-        {issue.contributions.map((c) => (
-          <li key={c.id}>
-            <span className="cd-swatch" style={{ background: colorScale(c.id) }} />
-            <Text info size={Text.Size.S}>
-              {c.name} · {formatMinutes(c.minutes)}
-            </Text>
-          </li>
-        ))}
-      </ul>
-    </article>
+      <div className="aw__entry__user-activity">
+        <div className="aw__entry__user-activity__data">
+          <div className="aw__entry__user-activity__data__header">
+            <div className="aw__entry__user-activity__data__header__action">
+              <span className="aw__action-name">{formatMinutes(total)} total</span>
+            </div>
+          </div>
+
+          <div className="aw__entry__user-activity__data__content">
+            <div className="cd-track">
+              <div
+                className="cd-bar"
+                role="img"
+                aria-label={issue.contributions
+                  .map((c) => `${c.name}: ${formatMinutes(c.minutes)}`)
+                  .join(", ")}
+                style={{ width: `${barWidthPct}%` }}
+              >
+                {issue.contributions.map((c) => {
+                  const share = total > 0 ? (c.minutes / total) * 100 : 0;
+                  const background = colorScale(c.id);
+                  return (
+                    <div
+                      key={c.id}
+                      className="cd-segment"
+                      style={{ flexBasis: `${share}%`, background, color: foregroundFor(background) }}
+                      title={`${c.name}: ${formatMinutes(c.minutes)} (${share.toFixed(1)}%)`}
+                    >
+                      {share >= 12 && (
+                        <Text size={Text.Size.S} className="cd-segment-label">
+                          {mode === "percent" ? `${Math.round(share)}%` : formatMinutes(c.minutes)}
+                        </Text>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <ul className="cd-legend">
+              {issue.contributions.map((c) => (
+                <li key={c.id}>
+                  <span className="cd-swatch" style={{ background: colorScale(c.id) }} />
+                  <Text info size={Text.Size.S}>
+                    {c.name} · {formatMinutes(c.minutes)}
+                  </Text>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

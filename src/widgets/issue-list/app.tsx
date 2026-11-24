@@ -8,7 +8,7 @@ import "../../style/svg.css";
 
 import ButtonGroup from "@jetbrains/ring-ui-built/components/button-group/button-group";
 import Button from "@jetbrains/ring-ui-built/components/button/button";
-import Avatar, { Size } from "@jetbrains/ring-ui-built/components/avatar/avatar";
+import ButtonSet from "@jetbrains/ring-ui-built/components/button-set/button-set";
 import ButtonToolbar from "@jetbrains/ring-ui-built/components/button-toolbar/button-toolbar";
 
 import { ContributionDistribution, type DistributionMode } from "./ContributionDistribution.tsx";
@@ -94,10 +94,11 @@ const AppComponent = () => {
 
             <ButtonGroup>
                 {authors.map((author) => (
-                    <Avatar key={author.id} username={author.name} size={Size.Size20} onClick={() => toggleAuthor(author.id)} />
+                    <Button key={author.id} active={activeAuthors.has(author.id)} onClick={() => toggleAuthor(author.id)}>
+                        {author.name}
+                    </Button>
                 ))}
             </ButtonGroup>
-
             <ButtonGroup>
                 <Button active={mode === "percent"} onClick={() => setMode("percent")}>
                 100%

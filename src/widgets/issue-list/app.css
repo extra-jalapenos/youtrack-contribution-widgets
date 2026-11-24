@@ -28,11 +28,45 @@ body {
   overflow-y: auto;
 }
 
-.contribution-distribution {
+.aw__entry {
   display: flex;
   flex-direction: column;
   gap: var(--ring-unit);
   margin: var(--ring-unit) 0;
+}
+
+.aw__issue {
+  display: flex;
+  align-items: baseline;
+  gap: var(--ring-unit);
+}
+
+.aw__issue__id {
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.aw__issue__summary {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aw__entry__user-activity__data__header {
+  color: var(--ring-secondary-color);
+  font-size: var(--ring-font-size-smaller);
+}
+
+.aw__entry__user-activity__data__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ring-unit);
+}
+
+#header > div {
+  align-items: center;
 }
 
 .author-filter {
@@ -63,32 +97,6 @@ body {
 .summary-bar {
   padding-bottom: calc(var(--ring-unit) * 2);
   border-bottom: 1px solid var(--ring-borders-color);
-}
-
-.summary-bar .cd-key {
-  color: inherit;
-}
-
-.cd-header {
-  display: flex;
-  align-items: baseline;
-  gap: var(--ring-unit);
-}
-
-.cd-key {
-  color: var(--ring-link-color);
-}
-
-.cd-summary {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.cd-total {
-  white-space: nowrap;
 }
 
 .cd-track {
