@@ -43,6 +43,11 @@ body {
   gap: var(--ring-unit);
 }
 
+.legend {
+  display: flex;
+  gap: calc(2 * var(--ring-unit));
+}
+
 .issue.id {
   font-weight: bold;
   white-space: nowrap;
@@ -54,11 +59,6 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.entry.user-activity.data.header:not(.action) {
-  color: var(--ring-secondary-color);
-  font-size: var(--ring-font-size-smaller);
 }
 
 .entry.user-activity.data.content {
@@ -116,6 +116,12 @@ body {
   justify-content: center;
   min-width: 2px;
   overflow: hidden;
+}
+
+/* Ring UI's Text sets its own color; use the segment's foreground color instead */
+.cd-segment .cd-segment-label,
+.cd-segment .cd-segment-label * {
+  color: inherit;
 }
 
 .cd-segment-label {
