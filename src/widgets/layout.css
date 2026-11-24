@@ -1,0 +1,96 @@
+/*
+ * Shared layout for plot widgets. The graph row must have a bounded height (1fr of a
+ * viewport-high grid), otherwise the measured height feeds back into the SVG height
+ * and the widget grows without limit.
+ */
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+}
+
+#root {
+  background-color: var(--ring-content-background-color);
+  font-family: var(--ring-font-family);
+  font-size: var(--ring-font-size);
+  color: var(--ring-text-color);
+  display: grid;
+  height: 100%;
+  grid-template-areas: "header"
+  "summary"
+  "graph";
+  grid-template-rows: min-content min-content minmax(0, 1fr);
+  grid-template-columns: 1fr;
+  gap: var(--ring-unit);
+}
+
+#header {
+  grid-area: header;
+}
+
+#summary {
+  grid-area: summary;
+}
+
+#graph {
+  grid-area: graph;
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.component {
+  margin: var(--ring-unit);
+  display: flex;
+  overflow: hidden;
+}
+
+/* inline svgs leave a baseline gap that adds a few px of height on every measure */
+#graph svg {
+  display: block;
+}
+
+text {
+  fill: currentColor;
+  font-family: var(--ring-font-family);
+  font-size: var(--ring-font-size);
+}
+
+.axis line, .axis path {
+  stroke: currentColor;
+}
+
+g.grid line {
+  stroke: currentColor;
+  opacity: 0.05;
+}
+
+.scrollable-canvas {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.scroll-area {
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* days without any logged work: flat, theme-aware placeholder instead of the contribution colour.
+   CSS beats the fill/opacity presentation attributes d3 sets (and transitions). */
+rect[data-total-minutes="0"] {
+  fill: currentColor;
+  opacity: 0.1;
+}
+
+.resizing .canvas * {
+  filter: grayscale();
+  opacity: 0.5;
+}
