@@ -171,7 +171,7 @@ export const createColorScaleFromIndices = (
 ): ScaleOrdinal<string, string> => {
   const backgrounds = indices.map((i) => {
     const pair = YOUTRACK_COLORS[i];
-    if (!pair) throw new RangeError(`Unknown YouTrack color index: ${i}`);
+    if (!pair) {throw new RangeError(`Unknown YouTrack color index: ${i}`);}
     return pair.background;
   });
   return scaleOrdinal<string, string>(backgrounds).domain(domain);

@@ -38,6 +38,14 @@
       "extensionPoint": "DASHBOARD_WIDGET",
       "iconPath": "time-plot/widget-icon.svg",
       "description": "A bar chart grouped by either days, months, etc. showing the contributed time to issues defined in a query."
+    },
+    {
+      "key": "issue-list",
+      "name": "Contributions to issues in query and timeframe",
+      "indexPath": "issue-list/index.html",
+      "extensionPoint": "DASHBOARD_WIDGET",
+      "iconPath": "issue-list/widget-icon.svg",
+      "description": "A stacked bar chart grouped by issue, showing the contributed time to issues defined in a query."
     }
   ]
 }

@@ -23,16 +23,10 @@ const ConfigurationComponent: React.FunctionComponent<Props> = ({
         query: 'has: work',
         binSize: 15,
         groupWorkItemsBy: "week",
-        timeframe: {
-          start: {
-            unit: "months",
-            amount: -3
-          },
-          end: {
-            unit: "days",
-            amount: 1
-          }
-        },
+        timeframeStartOffsetAmount: -3,
+        timeframeStartOffsetUnit: "month",
+        timeframeEndOffsetAmount: 1,
+        timeframeEndOffsetUnit: "day",
         ...currentConfiguration
       }
     );
@@ -71,7 +65,7 @@ const ConfigurationComponent: React.FunctionComponent<Props> = ({
             name="query"
             value={config.query}
             onChange={onChange}
-            />
+          />
         </div>
         
         <div className="ring-form__group">
@@ -79,14 +73,14 @@ const ConfigurationComponent: React.FunctionComponent<Props> = ({
           <ButtonGroup>
             {Array.from(timeAggregationOptions.keys()).map((key) => {
               return (
-                  <Button
-                      key={key}
-                      value={key}
-                      onClick={() => setConfig({ ...config, "groupWorkItemsBy": key })}
-                      active={key === config.groupWorkItemsBy}
-                  >
-                    {key}
-                  </Button>
+                <Button
+                  key={key}
+                  value={key}
+                  onClick={() => setConfig({ ...config, "groupWorkItemsBy": key as WidgetConfiguration["groupWorkItemsBy"] })}
+                  active={key === config.groupWorkItemsBy}
+                >
+                  {key}
+                </Button>
               )
             })}
           </ButtonGroup>
@@ -97,14 +91,14 @@ const ConfigurationComponent: React.FunctionComponent<Props> = ({
           <ButtonGroup>
             {[15, 30, 60, 120, 240, 480, 24 * 60 ].map((minutes) => {
               return (
-                  <Button
-                      key={minutes}
-                      value={minutes}
-                      onClick={() => setConfig({ ...config, "binSize": minutes })}
-                      active={minutes === config.binSize}
-                  >
-                    {readableDuration(minutes)}
-                  </Button>
+                <Button
+                  key={minutes}
+                  value={minutes}
+                  onClick={() => setConfig({ ...config, "binSize": minutes })}
+                  active={minutes === config.binSize}
+                >
+                  {readableDuration(minutes)}
+                </Button>
               )
             })}
           </ButtonGroup>

@@ -27,7 +27,7 @@ const HistogramPlot = ({
   const pinnedRef = useRef<SVGSVGElement>(null);
   const chartRef = useRef<SVGSVGElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const previousDataRef = useRef<ChartDataPoint[] | null>(null);
+  const previousDataRef = useRef<ChartData | null>(null);
 
   const viewBoxHeight = height > 0 ? height : 0;
   const viewBoxWidth = width > 0 ? width : 0;

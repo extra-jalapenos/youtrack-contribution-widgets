@@ -18,6 +18,8 @@ export type WidgetConfiguration = {
 
 export type ChartData = InternMap<number, number>
 
+export type ChartDataByPerson = InternMap<string, InternMap<number, number>>
+
 export type ChartConfig = {
     viewBoxWidth?: number,
     viewBoxHeight?: number,

@@ -36,7 +36,7 @@ const Segment = ({ share, background, title, label }: SegmentProps) => {
   useLayoutEffect(() => {
     const segment = segmentRef.current;
     const labelEl = labelRef.current;
-    if (!segment || !labelEl) return;
+    if (!segment || !labelEl) {return;}
     const update = () =>
       setFits(labelEl.offsetWidth + LABEL_PADDING_PX <= segment.clientWidth);
     update();

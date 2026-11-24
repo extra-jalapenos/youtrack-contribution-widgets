@@ -27,7 +27,7 @@ const getLocale = (): string => {
         navigator.language,
     ];
     return candidates.find((l) => {
-        if (!l) return false;
+        if (!l) {return false;}
         try {
             return Intl.DateTimeFormat.supportedLocalesOf(l.replace("_", "-")).length > 0;
         } catch {
@@ -224,34 +224,34 @@ const TilePlot = ({
     }, []);
 
     return (
-        <div className={`scrollable-canvas ${isResizing ? "resizing" : ""}`}>
-            <svg
-                ref={pinnedRef}
-                className="pinned axes"
-                width={margins.left}
-                height={viewBoxHeight}
-            >
-                <g
-                    className="y axis"
-                    transform={`translate(${margins.left - 1}, ${margins.top})`}
-                />
-            </svg>
-            <div ref={scrollRef} className="scroll-area">
-                <svg
-                    ref={chartRef}
-                    width={contentWidth}
-                    height={viewBoxHeight}
-                >
-                    <g transform={`translate(0, ${margins.top})`}>
-                        <g className="canvas"/>
-                        <g
-                            className="x axis"
-                            transform={`translate(0, ${canvasHeight})`}
-                        />
-                    </g>
-                </svg>
-            </div>
+      <div className={`scrollable-canvas ${isResizing ? "resizing" : ""}`}>
+        <svg
+          ref={pinnedRef}
+          className="pinned axes"
+          width={margins.left}
+          height={viewBoxHeight}
+        >
+          <g
+            className="y axis"
+            transform={`translate(${margins.left - 1}, ${margins.top})`}
+          />
+        </svg>
+        <div ref={scrollRef} className="scroll-area">
+          <svg
+            ref={chartRef}
+            width={contentWidth}
+            height={viewBoxHeight}
+          >
+            <g transform={`translate(0, ${margins.top})`}>
+              <g className="canvas"/>
+              <g
+                className="x axis"
+                transform={`translate(0, ${canvasHeight})`}
+              />
+            </g>
+          </svg>
         </div>
+      </div>
     );
 };
 

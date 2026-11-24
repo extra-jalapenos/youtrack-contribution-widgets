@@ -65,7 +65,7 @@ const AppComponent = () => {
   };
 
   const readConfig = async () => {
-    if (isLocalhost) return;
+    if (isLocalhost) {return;}
     const registeredHost = await YTApp.register()
     if (!("readConfig" in registeredHost)) {
       console.error("no readconfig method in host! Check extension type")
@@ -79,7 +79,7 @@ const AppComponent = () => {
         // if config is sufficient
         setConfig(loadedConfig);
         if ("setTitle" in registeredHost)
-          await registeredHost.setTitle(loadedConfig.title);
+          {await registeredHost.setTitle(loadedConfig.title);}
       } else {
         await registeredHost.enterConfigMode();
         setIsConfiguring(true);
@@ -92,7 +92,7 @@ const AppComponent = () => {
   const doneConfiguring = async (newConfig?: WidgetConfiguration) => {
     try {
       if (host === "localhost") {
-        if (newConfig) setConfig(newConfig);
+        if (newConfig) {setConfig(newConfig);}
         setIsConfiguring(false);
         return;
       }
@@ -180,79 +180,79 @@ const AppComponent = () => {
 
   if (isConfiguring) {
     return (
-        <Configuration
-            onDone={doneConfiguring}
-            currentConfiguration={config}
-        />
+      <Configuration
+        onDone={doneConfiguring}
+        currentConfiguration={config}
+      />
     );
   }
 
   return (
-      <>
-        <section id="header" className="component">
-          <ButtonToolbar>
-            <ButtonGroup>
-              {authors.map((person) => {
+    <>
+      <section id="header" className="component">
+        <ButtonToolbar>
+          <ButtonGroup>
+            {authors.map((person) => {
                 return (
-                    <Button
-                        key={person.id}
-                        active={person.id === selectedPerson}
-                        onClick={() => setSelectedPerson(person.id)}
-                    >
-                      {person.name}
-                    </Button>
+                  <Button
+                    key={person.id}
+                    active={person.id === selectedPerson}
+                    onClick={() => setSelectedPerson(person.id)}
+                  >
+                    {person.name}
+                  </Button>
                 );
               })}
-            </ButtonGroup>
+          </ButtonGroup>
 
-            {/*<Button onClick={() => loadData()}>Refresh Data</Button>*/}
+          {/*<Button onClick={() => loadData()}>Refresh Data</Button>*/}
 
-            <ButtonGroup>
-              {Array.from(timeAggregationOptions.keys()).map((key) => {
+          <ButtonGroup>
+            {Array.from(timeAggregationOptions.keys()).map((key) => {
                 return (
-                    <Button
-                        key={key}
-                        value={key}
-                        onClick={() => setSelectedTimeAggregationKey(key)}
-                        active={key === selectedTimeAggregationKey}
-                    >
-                      {key}
-                    </Button>
+                  <Button
+                    key={key}
+                    value={key}
+                    onClick={() => setSelectedTimeAggregationKey(key)}
+                    active={key === selectedTimeAggregationKey}
+                  >
+                    {key}
+                  </Button>
                 )
               })}
-            </ButtonGroup>
+          </ButtonGroup>
 
-            <Button onClick={() => setIsConfiguring(!isConfiguring)}>
-              Configure
-            </Button>
+          <Button onClick={() => setIsConfiguring(!isConfiguring)}>
+            Configure
+          </Button>
 
-            <DatePicker
-                clear
-                from={timeframe.from}
-                maxDate={new Date().toDateString()}
-                onChange={({ from, to }: { from?: Date | null; to?: Date | null }) => {
+          <DatePicker
+            clear
+            from={timeframe.from}
+            maxDate={new Date().toDateString()}
+            onChange={({ from, to }: { from?: Date | null; to?: Date | null }) => {
                   if (from && to) {
                     setTimeframe({ from, to });
                   }
                 }}
-                range
-                to={timeframe.to}
-            />
-          </ButtonToolbar>
-        </section>
-        <section id="graph" className="component" ref={(el: HTMLElement | null) => setPlotEl(el as HTMLDivElement | null)}>
-          {(
-              <TimePlot
-                  data={chartData}
-                  timeframe={timeframe}
-                  isResizing={isResizing}
-                  width={containerWidth}
-                  height={containerHeight}
-                  timeAggregation={timeAggregationOptions.get(selectedTimeAggregationKey)!}
-              />
+            range
+            to={timeframe.to}
+          />
+        </ButtonToolbar>
+      </section>
+      <section id="graph" className="component" ref={(el: HTMLElement | null) => setPlotEl(el as HTMLDivElement | null)}>
+        {(
+          <TimePlot
+            data={chartData}
+            timeframe={timeframe}
+            isResizing={isResizing}
+            width={containerWidth}
+            height={containerHeight}
+            timeAggregation={timeAggregationOptions.get(selectedTimeAggregationKey)!}
+          />
           )}
-        </section>
-      </>
+      </section>
+    </>
   );
 };
 
