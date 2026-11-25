@@ -122,7 +122,6 @@ body {
   font-family: var(--ring-font-family);
   font-size: var(--ring-font-size);
   color: var(--ring-text-color);
-  gap: calc(var(--ring-unit) * 1);
   box-sizing: border-box;
   height: 100vh;
   padding: calc(var(--ring-unit) / 2);
@@ -131,7 +130,6 @@ body {
 .component {
   margin: var(--ring-unit);
   padding: var(--ring-unit) * 2;
-  overflow: hidden;
 }
 
 @media (prefers-reduced-motion: reduce) {

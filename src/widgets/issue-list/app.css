@@ -5,9 +5,8 @@
 }
 
 #list {
-  flex: 1;
   min-height: 0;
-  overflow: scroll;
+  overflow-y: scroll;
   display: grid;
   gap: calc(3 * var(--ring-unit));
 }
@@ -78,7 +77,6 @@
   padding-bottom: calc(var(--ring-unit) * 2);
   border-bottom: 1px solid var(--ring-borders-color);
 }
-
 
 .distribution-bar {
   display: flex;
