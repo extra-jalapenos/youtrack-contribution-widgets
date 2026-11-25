@@ -177,24 +177,6 @@ export const createColorScaleFromIndices = (
   return scaleOrdinal<string, string>(backgrounds).domain(domain);
 };
 
-/**
- * Indices approximating the palette of the portrait image: near-black background, navy and
- * saturated blue clothing, magenta and red shading, pink and salmon highlights, pale pink skin.
- * Ordered dark to light.
- */
-export const PORTRAIT_INDICES = [
-  4, // blue
-  19, // pale pink
-  9, // magenta
-  11, // orange
-  12, // pink
-  20, // red
-];
-
-/** Scale resembling the portrait image's colors. */
-export const createPortraitColorScale = (domain: string[]): ScaleOrdinal<string, string> =>
-  createColorScaleFromIndices(PORTRAIT_INDICES, domain);
-
 /** Categorical scale using the default, well-spread color order. */
 export const createCategoricalColorScale = (domain: string[]): ScaleOrdinal<string, string> =>
   createColorScaleFromIndices(CATEGORICAL_INDICES, domain);

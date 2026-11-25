@@ -20,7 +20,7 @@ import {
 import { loadExampleIssues } from "./dummyData.ts";
 import type { AuthorContribution, IssueContribution } from "./types.ts";
 import type { HostAPI } from "../../../@types/globals";
-import { createPortraitColorScale } from "./colors.ts";
+import { createCategoricalColorScale, createPortraitColorScale } from "./colors.ts";
 
 const totalMinutes = (issue: IssueContribution) =>
   sum(issue.contributions, (c) => c.minutes);
@@ -143,7 +143,7 @@ const AppComponent = () => {
     ).map(([id]) => id);
     return {
       authors: sortedIds.map((id) => ({ id, name: authorNames.get(id) ?? id })),
-      colorScale: createPortraitColorScale(sortedIds),
+      colorScale: createCategoricalColorScale(sortedIds),
       // In absolute mode all bars are scaled against the issue with the most time across all authors,
       // so bar widths stay stable when authors are toggled
       maxTotalMinutes: max(allIssues, totalMinutes) ?? 0,
