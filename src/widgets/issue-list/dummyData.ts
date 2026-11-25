@@ -1,6 +1,7 @@
 import type { IssueContribution } from "./types";
 import issuesJson from "../../dev/issues.json";
 import workItemsJson from "../../../workItems.json";
+import { rollup, sum } from "d3";
 
 interface RawIssue {
   id: string;
@@ -14,105 +15,48 @@ interface RawWorkItem {
   duration: { minutes: number };
 }
 
-// The example data only has two authors; show them under demo names
-const RENAMED_AUTHORS: Record<string, string> = { Alexandria: "Roxy", Robert: "Connie" };
-
-// Roughly this share of all worklogs is reassigned to the extra demo authors
-const EXTRA_AUTHOR_SHARE = 0.25;
-const EXTRA_AUTHORS = [
-  { id: "demo-cinna", name: "Cinna" },
-  { id: "demo-mickey", name: "Mickey" },
-];
-
 /**
  * Builds issues from the example data (src/dev/issues.json + workItems.json):
  * worklogs are summed per author and issue. Issues without worklogs are skipped.
- * Authors are renamed and ~25% of worklogs are reassigned to two extra authors (seeded, so stable).
  */
 export const loadExampleIssues = (): IssueContribution[] => {
-  const rand = createRng(7);
-  const byIssue = new Map<string, Map<string, { id: string; name: string; minutes: number }>>();
-  for (const raw of workItemsJson as unknown as RawWorkItem[]) {
-    const w: RawWorkItem =
-      rand() < EXTRA_AUTHOR_SHARE
-        ? { ...raw, author: EXTRA_AUTHORS[Math.floor(rand() * EXTRA_AUTHORS.length)] }
-        : { ...raw, author: { ...raw.author, name: RENAMED_AUTHORS[raw.author.name] ?? raw.author.name } };
-    const authors = byIssue.get(w.issue.id) ?? new Map();
-    const entry = authors.get(w.author.id) ?? { id: w.author.id, name: w.author.name, minutes: 0 };
-    entry.minutes += w.duration.minutes;
-    authors.set(w.author.id, entry);
-    byIssue.set(w.issue.id, authors);
-  }
+  const workItems = workItemsJson as unknown as RawWorkItem[];
+  const issues = issuesJson as unknown as RawIssue[];
 
-  return (issuesJson as unknown as RawIssue[])
-    .filter((i) => byIssue.has(i.id))
-    .map((i) => ({
-      key: i.idReadable,
-      summary: i.summary,
-      contributions: [...byIssue.get(i.id)!.values()].sort((a, b) => b.minutes - a.minutes),
-    }));
-};
+  // author id -> author name (one entry per unique author)
+  const authorNames = rollup(
+    workItems,
+    (v) => v[0].author.name,
+    (d) => d.author.id
+  );
 
-export const dummyIssue: IssueContribution = {
-  key: "DEMO-123",
-  summary: "Implement worklog export for monthly reports",
-  contributions: [
-    { id: "1", name: "David", minutes: 14 * 60 },
-    { id: "2", name: "Britta", minutes: 9 * 60 + 30 },
-    { id: "3", name: "Cinna", minutes: 5 * 60 },
-    { id: "4", name: "Annie", minutes: 2 * 60 + 15 },
-  ],
-};
+  // issue id -> issue (summary + readable key)
+  const issuesById = rollup(
+    issues,
+    (v) => v[0],
+    (d) => d.id
+  );
 
-const AUTHORS = [
-  { id: "1", name: "David" },
-  { id: "2", name: "Britta" },
-  { id: "3", name: "Cinna" },
-  { id: "4", name: "Annie" },
-  { id: "5", name: "Troy" },
-  { id: "6", name: "Abed" },
-];
+  // issue id -> author id -> total minutes
+  const minutesByIssueAuthor = rollup(
+    workItems,
+    (v) => sum(v, (d) => d.duration.minutes),
+    (d) => d.issue.id,
+    (d) => d.author.id
+  );
 
-const SUMMARIES = [
-  "Fix login redirect loop",
-  "Add dark mode to settings page",
-  "Refactor worklog aggregation",
-  "Investigate slow dashboard loading",
-  "Update dependencies to latest versions",
-  "Write onboarding documentation",
-  "Support CSV import for issues",
-  "Handle timezone differences in reports",
-];
-
-// Small seeded PRNG (mulberry32) so generated data is stable between renders
-const createRng = (seed: number) => () => {
-  seed = (seed + 0x6d2b79f5) | 0;
-  let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-  t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-};
-
-/**
- * Generates `count` dummy issues with 1-6 contributing authors each.
- * The same `seed` always yields the same issues.
- */
-export const generateDummyIssues = (count: number, seed = 42): IssueContribution[] => {
-  const rand = createRng(seed);
-  const randInt = (min: number, max: number) => min + Math.floor(rand() * (max - min + 1));
-
-  return Array.from({ length: count }, (_, i) => {
-    const authorCount = randInt(1, AUTHORS.length);
-    const picked = [...AUTHORS].sort(() => rand() - 0.5).slice(0, authorCount);
-    const contributions = picked
-      .map((a) => ({ ...a, minutes: randInt(1, 32) * 15 })) // 15 min .. 8h
-      .sort((a, b) => b.minutes - a.minutes);
-
-    return {
-      key: `DEMO-${100 + i}`,
-      summary: SUMMARIES[randInt(0, SUMMARIES.length - 1)],
-      contributions,
-    };
-  });
+  return [...minutesByIssueAuthor]
+    .filter(([issueId]) => issuesById.has(issueId))
+    .map(([issueId, authorMinutes]) => {
+      const issue = issuesById.get(issueId)!;
+      return {
+        key: issue.idReadable,
+        summary: issue.summary,
+        contributions: [...authorMinutes]
+          .map(([id, minutes]) => ({ id, name: authorNames.get(id)!, minutes }))
+          .sort((a, b) => b.minutes - a.minutes),
+      };
+    });
 };
 
 export const formatMinutes= (minutes: number): string => {
