@@ -128,7 +128,7 @@ const ContributionDistributionComponent = ({
             </Text>
           </div>
         ))}
-        <div>
+        <div hidden={issue.contributions.length === 1}>
           <Text size={Text.Size.S}>Total · {formatMinutes(total)}</Text>
         </div>
       </div>
