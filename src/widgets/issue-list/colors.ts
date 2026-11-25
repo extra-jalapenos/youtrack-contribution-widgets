@@ -1,4 +1,4 @@
-import { scaleOrdinal, type ScaleOrdinal } from "d3-scale";
+import { interpolateMagma, interpolateRdPu, interpolateViridis, lab, scaleOrdinal, type ScaleOrdinal } from "d3";
 
 /** A YouTrack color-coding pair (background + matching text color). */
 export interface ColorPair {
@@ -177,10 +177,22 @@ export const createColorScaleFromIndices = (
   return scaleOrdinal<string, string>(backgrounds).domain(domain);
 };
 
-/** Categorical scale using the default, well-spread color order. */
-export const createCategoricalColorScale = (domain: string[]): ScaleOrdinal<string, string> =>
-  createColorScaleFromIndices(CATEGORICAL_INDICES, domain);
+// Trim the extremes of Magma (near-black and pale yellow) so every segment stays visible.
+const MAGMA_START = 1;
+const MAGMA_END = 0.3;
+
+/** Ordinal scale: category key -> color sampled evenly along d3's Magma interpolator. */
+export const createCategoricalColorScale = (domain: string[]): ScaleOrdinal<string, string> => {
+  const n = domain.length;
+  const colors = domain.map((_, i) =>
+    interpolateRdPu(n === 1 ? (MAGMA_START + MAGMA_END) / 2 : MAGMA_START + (i / (n - 1)) * (MAGMA_END - MAGMA_START)),
+  );
+  return scaleOrdinal<string, string>(colors).domain(domain);
+};
 
 /** Text color that goes with a background returned by the scale. */
-export const foregroundFor = (background: string): string =>
-  foregroundByBackground.get(background) ?? "#ffffff";
+export const foregroundFor = (background: string): string => {
+  const known = foregroundByBackground.get(background);
+  if (known) {return known;}
+  return lab(background).l > 60 ? "#444444" : "#ffffff";
+};

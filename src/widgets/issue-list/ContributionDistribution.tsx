@@ -84,7 +84,7 @@ const ContributionDistributionComponent = ({
   return (
     <div className="entry">
       <div className="issue">
-        <Link className="issue id">{issue.key}</Link>
+        <Link className="issue id" active href={`/issue/${issue.key}`}>{issue.key}</Link>
         <Link className="issue summary">{issue.summary}</Link>
       </div>
       <div
@@ -126,7 +126,7 @@ const ContributionDistributionComponent = ({
           </div>
         ))}
         <div hidden={issue.contributions.length === 1}>
-          <Text size={Text.Size.S}>Total · {formatMinutes(total)}</Text>
+          <Text info size={Text.Size.S}>Total · {formatMinutes(total)}</Text>
         </div>
       </div>
     </div>

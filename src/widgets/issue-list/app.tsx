@@ -20,7 +20,7 @@ import {
 import { loadExampleIssues } from "./dummyData.ts";
 import type { AuthorContribution, IssueContribution } from "./types.ts";
 import type { HostAPI } from "../../../@types/globals";
-import { createCategoricalColorScale, createPortraitColorScale } from "./colors.ts";
+import { createCategoricalColorScale } from "./colors.ts";
 
 const totalMinutes = (issue: IssueContribution) =>
   sum(issue.contributions, (c) => c.minutes);
