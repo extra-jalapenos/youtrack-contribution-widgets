@@ -83,13 +83,10 @@ const ContributionDistributionComponent = ({
 
   return (
     <div className="entry">
-      <div className="container">
-        <div className="issue">
-          <Link className="issue id">{issue.key}</Link>
-          <Link className="issue summary">{issue.summary}</Link>
-        </div>
+      <div className="issue">
+        <Link className="issue id">{issue.key}</Link>
+        <Link className="issue summary">{issue.summary}</Link>
       </div>
-
       <div
         className="distribution-bar"
         role="img"

@@ -201,8 +201,8 @@ const AppComponent = () => {
 
   return (
     <div className="widget">
-      <section id="header" className="component">
-        <ButtonToolbar>
+      <section id="header">
+        <article className="component">
           <ButtonGroup>
             {authors.map((author) => (
               <Button
@@ -214,39 +214,43 @@ const AppComponent = () => {
               </Button>
             ))}
           </ButtonGroup>
-          <ButtonGroup>
-            <Button
-              active={mode === "percent"}
-              onClick={() => setMode("percent")}
-            >
-              100%
-            </Button>
-            <Button
-              active={mode === "absolute"}
-              onClick={() => setMode("absolute")}
-            >
-              Absolute
-            </Button>
-          </ButtonGroup>
-          <DatePicker
-            clear
-            from={timeframe.from}
-            maxDate={new Date().toDateString()}
-            onChange={({
-              from,
-              to,
-            }: {
-              from?: Date | null;
-              to?: Date | null;
-            }) => {
-              if (from && to) {
-                setTimeframe({ from, to });
-              }
-            }}
-            range
-            to={timeframe.to}
-          />
-        </ButtonToolbar>
+        </article>
+        <article className="component">
+          <ButtonToolbar>
+            <ButtonGroup>
+              <Button
+                active={mode === "percent"}
+                onClick={() => setMode("percent")}
+              >
+                100%
+              </Button>
+              <Button
+                active={mode === "absolute"}
+                onClick={() => setMode("absolute")}
+              >
+                Absolute
+              </Button>
+            </ButtonGroup>
+            <DatePicker
+              clear
+              from={timeframe.from}
+              maxDate={new Date().toDateString()}
+              onChange={({
+                from,
+                to,
+              }: {
+                from?: Date | null;
+                to?: Date | null;
+              }) => {
+                if (from && to) {
+                  setTimeframe({ from, to });
+                }
+              }}
+              range
+              to={timeframe.to}
+            />
+          </ButtonToolbar>
+        </article>
       </section>
       {loading && <section className="component">Loading worklogs…</section>}
       {!loading && issues.length === 0 && (

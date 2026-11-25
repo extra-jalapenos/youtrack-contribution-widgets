@@ -8,7 +8,7 @@
   min-height: 0;
   overflow-y: scroll;
   display: grid;
-  gap: calc(3 * var(--ring-unit));
+  gap: calc(2 * var(--ring-unit));
 }
 
 .entry {
@@ -22,11 +22,6 @@
   display: flex;
   align-items: baseline;
   gap: var(--ring-unit);
-}
-
-.legend {
-  display: flex;
-  gap: calc(2 * var(--ring-unit));
 }
 
 .issue.id {
@@ -105,11 +100,10 @@
   white-space: nowrap;
 }
 
-.cd-legend {
+.legend {
   display: flex;
   flex-wrap: wrap;
   gap: var(--ring-unit) calc(var(--ring-unit) * 2);
-  margin: var(--ring-unit) 0;
   padding: 0;
   list-style: none;
 }
