@@ -1,0 +1,16 @@
+.scrollable-canvas {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+}
+
+.scrollable-canvas .pinned-axis {
+  overflow: visible;
+}
+
+.scroll-area {
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}

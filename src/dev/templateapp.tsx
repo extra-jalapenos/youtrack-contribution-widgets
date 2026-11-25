@@ -4,7 +4,7 @@
 // import type { EmbeddableWidgetAPI, HostAPI } from "../../@types/globals";
 // import { Configuration } from "./components/Configuration.tsx";
 // import "@jetbrains/ring-ui-built/components/style.css";
-// import "./app.css";
+
 // import { sub } from "date-fns";
 //
 // import { extractAllPeople } from "../utils/dataService.ts";

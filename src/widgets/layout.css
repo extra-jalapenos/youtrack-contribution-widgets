@@ -3,30 +3,6 @@
  * viewport-high grid), otherwise the measured height feeds back into the SVG height
  * and the widget grows without limit.
  */
-html {
-  height: 100%;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  height: 100vh;
-}
-
-#root {
-  background-color: var(--ring-content-background-color);
-  font-family: var(--ring-font-family);
-  font-size: var(--ring-font-size);
-  color: var(--ring-text-color);
-  display: grid;
-  height: 100%;
-  grid-template-areas: "header"
-  "summary"
-  "graph";
-  grid-template-rows: min-content min-content minmax(0, 1fr);
-  grid-template-columns: 1fr;
-  gap: var(--ring-unit);
-}
 
 #header {
   grid-area: header;

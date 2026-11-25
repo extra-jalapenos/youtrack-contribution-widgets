@@ -107,3 +107,39 @@
     --color-id-0-foreground: #444;
     --color-id-0-background: #fff;
 }
+
+body {
+  padding-right: calc(var(--ring-unit) * 2);
+  padding-bottom: var(--ring-unit);
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+}
+
+.widget {
+  font-family: var(--ring-font-family);
+  font-size: var(--ring-font-size);
+  color: var(--ring-text-color);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--ring-unit) * 2);
+  box-sizing: border-box;
+  height: 100vh;
+  padding: calc(var(--ring-unit) / 2);
+}
+
+.component {
+  margin: var(--ring-unit);
+  padding: var(--ring-unit) * 2;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .resize-indicator {
+    transition: none;
+  }
+}
+
+#dummy {
+  stroke: 1px solid red;
+}

@@ -2,10 +2,11 @@ import {memo, useEffect, useMemo, useState} from "react";
 import {sub} from "date-fns";
 import {descending, max, rollup, sort, sum} from "d3-array";
 import "@jetbrains/ring-ui-built/components/style.css";
-import "./app.css";
 
 import "../../style/base.css";
+import "../../style/base.css";
 import "../../style/svg.css";
+import "./app.css";
 
 import ButtonGroup from "@jetbrains/ring-ui-built/components/button-group/button-group";
 import Button from "@jetbrains/ring-ui-built/components/button/button";
