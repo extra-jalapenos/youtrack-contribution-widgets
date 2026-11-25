@@ -1,7 +1,15 @@
+.widget {
+  display: grid;
+  grid-template-rows: min-content min-content 1fr;
+  height: 100vh;
+}
+
 #list {
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
+  overflow: scroll;
+  display: grid;
+  gap: calc(3 * var(--ring-unit));
 }
 
 .entry {
@@ -9,7 +17,6 @@
   flex-direction: column;
   gap: var(--ring-unit);
   margin: var(--ring-unit) 0;
-  padding-bottom: calc(3 * var(--ring-unit));
 }
 
 .issue {

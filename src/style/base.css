@@ -108,21 +108,21 @@
     --color-id-0-background: #fff;
 }
 
+
 body {
   padding-right: calc(var(--ring-unit) * 2);
   padding-bottom: var(--ring-unit);
   margin: 0;
   padding: 0;
   height: 100vh;
+  overflow: hidden;
 }
 
 .widget {
   font-family: var(--ring-font-family);
   font-size: var(--ring-font-size);
   color: var(--ring-text-color);
-  display: flex;
-  flex-direction: column;
-  gap: calc(var(--ring-unit) * 2);
+  gap: calc(var(--ring-unit) * 1);
   box-sizing: border-box;
   height: 100vh;
   padding: calc(var(--ring-unit) / 2);
